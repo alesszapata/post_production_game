@@ -44,6 +44,40 @@ def play_sound(sound_type):
         elif sound_type == "collect":
             duration = 0.08
             freq = 1200
+        elif sound_type == "victory":
+            notes = [392.0, 523.25, 659.25, 783.99, 659.25, 523.25]
+            note_duration = 0.14
+            applause_duration = 0.75
+            total_duration = len(notes) * note_duration + applause_duration
+            total_samples = int(sample_rate * total_duration)
+            buffer = bytearray()
+            for sample_index in range(total_samples):
+                t = sample_index / sample_rate
+                melody_value = 0.0
+                note_index = int(t / note_duration)
+                if note_index < len(notes):
+                    note_time = t - note_index * note_duration
+                    note_samples = int(sample_rate * note_duration)
+                    envelope = min(1.0, note_time / (note_duration * 0.85))
+                    note = notes[note_index]
+                    crowd_wobble = 0.55 + 0.45 * math.sin(2 * math.pi * (3.5 + note_index * 0.2) * note_time)
+                    harmonic = 0.7 * math.sin(2 * math.pi * note * note_time) + 0.3 * math.sin(2 * math.pi * (note * 2) * note_time + 0.5)
+                    melody_value = 22000 * harmonic * crowd_wobble * envelope
+
+                applause_time = t
+                clap_phase = (applause_time * 4.5) % 1.0
+                clap_envelope = max(0.0, 1.0 - clap_phase * 8.0)
+                clap_wave = math.sin(2 * math.pi * (260 + 110 * math.sin(2 * math.pi * 3 * applause_time)) * applause_time)
+                crowd_wave = math.sin(2 * math.pi * 70 * applause_time) * (0.55 + 0.45 * math.sin(2 * math.pi * 1.8 * applause_time))
+                applause_fade = min(1.0, t / 0.12) * max(0.0, 1.0 - max(0.0, t - 1.0) / 0.59)
+                applause_value = (10500 * clap_envelope * clap_wave + 2600 * crowd_wave) * applause_fade
+                val = max(-32767, min(32767, int(melody_value + applause_value)))
+                buffer += val.to_bytes(2, byteorder='little', signed=True)
+                buffer += val.to_bytes(2, byteorder='little', signed=True)
+            sound = pygame.mixer.Sound(buffer=bytes(buffer))
+            sound.set_volume(0.14)
+            sound.play()
+            return
         else:
             return
 
@@ -61,23 +95,68 @@ def play_sound(sound_type):
         pass
 
 # --- Pixel-Art Asset Generators ---
+def draw_retro_player(surface, x, y, color=(200, 50, 50)):
+    # Simple retro pixel character representation (e.g., a classic 8-bit block figure)
+    # Head
+    pygame.draw.rect(surface, (255, 220, 177), (x + 6, y, 12, 10))
+    # Eyes
+    pygame.draw.rect(surface, (0, 0, 0), (x + 8, y + 3, 2, 2))
+    pygame.draw.rect(surface, (0, 0, 0), (x + 14, y + 3, 2, 2))
+    # Body / Shirt
+    pygame.draw.rect(surface, color, (x + 4, y + 10, 16, 12))
+    # Legs
+    pygame.draw.rect(surface, (40, 40, 100), (x + 6, y + 22, 4, 8))
+    pygame.draw.rect(surface, (40, 40, 100), (x + 14, y + 22, 4, 8))
+
+def draw_retro_client(surface, x, y):
+    # Retro client sprite with a clipboard/briefcase look
+    # Head
+    pygame.draw.rect(surface, (240, 200, 150), (x + 6, y, 12, 10))
+    # Suit / Body
+    pygame.draw.rect(surface, (30, 30, 30), (x + 4, y + 10, 16, 12))
+    # Tie
+    pygame.draw.rect(surface, (200, 50, 50), (x + 11, y + 12, 2, 6))
+    # Legs
+    pygame.draw.rect(surface, (50, 50, 50), (x + 6, y + 22, 4, 8))
+    pygame.draw.rect(surface, (50, 50, 50), (x + 14, y + 22, 4, 8))
+
+
 def create_pixel_player():
     surf = pygame.Surface((36, 36), pygame.SRCALPHA)
-    pygame.draw.rect(surf, (0, 200, 255), (9, 12, 18, 18), border_radius=2)
-    pygame.draw.rect(surf, (255, 220, 177), (12, 4, 12, 9))
-    pygame.draw.rect(surf, (60, 40, 30), (12, 2, 12, 4))
-    surf.set_at((15, 7), (0, 0, 0))
-    surf.set_at((20, 7), (0, 0, 0))
+    # Hair / head
+    pygame.draw.rect(surf, (70, 40, 28), (9, 2, 18, 10))
+    pygame.draw.rect(surf, (255, 220, 177), (10, 4, 16, 12))
+    pygame.draw.rect(surf, (0, 0, 0), (13, 7, 3, 3))
+    pygame.draw.rect(surf, (0, 0, 0), (20, 7, 3, 3))
+    # Hair ponytail
+    pygame.draw.rect(surf, (70, 40, 28), (24, 6, 5, 9))
+    # Headset / headphones
+    pygame.draw.rect(surf, (45, 55, 75), (8, 5, 3, 8))
+    pygame.draw.rect(surf, (45, 55, 75), (25, 5, 3, 8))
+    pygame.draw.rect(surf, (45, 55, 75), (11, 3, 14, 2))
+    # Jacket / outfit
+    pygame.draw.rect(surf, (220, 80, 120), (8, 16, 20, 12))
+    pygame.draw.rect(surf, (255, 255, 255), (13, 18, 10, 5))
+    # Legs
+    pygame.draw.rect(surf, (55, 70, 110), (12, 30, 5, 6))
+    pygame.draw.rect(surf, (55, 70, 110), (19, 30, 5, 6))
     return surf
+
 
 def create_pixel_client():
     surf = pygame.Surface((36, 36), pygame.SRCALPHA)
-    pygame.draw.rect(surf, (230, 50, 50), (9, 12, 18, 18), border_radius=2)
-    pygame.draw.rect(surf, (255, 220, 177), (12, 4, 12, 9))
-    surf.set_at((17, 15), (255, 255, 255))
-    surf.set_at((17, 16), (255, 255, 255))
-    surf.set_at((17, 17), (255, 255, 255))
+    # Head
+    pygame.draw.rect(surf, (240, 200, 150), (10, 4, 16, 12))
+    pygame.draw.rect(surf, (0, 0, 0), (13, 7, 3, 3))
+    pygame.draw.rect(surf, (0, 0, 0), (20, 7, 3, 3))
+    # Suit
+    pygame.draw.rect(surf, (30, 30, 30), (8, 16, 20, 14))
+    pygame.draw.rect(surf, (200, 50, 50), (17, 18, 3, 7))
+    # Legs
+    pygame.draw.rect(surf, (50, 50, 50), (12, 30, 5, 6))
+    pygame.draw.rect(surf, (50, 50, 50), (19, 30, 5, 6))
     return surf
+
 
 def create_coffee_mug_surface():
     surf = pygame.Surface((32, 32), pygame.SRCALPHA)
@@ -101,38 +180,38 @@ def create_fire_frames():
 
 def create_station_icons():
     icons = {}
-    s1 = pygame.Surface((36, 36), pygame.SRCALPHA)
+    s1 = pygame.Surface((100, 100), pygame.SRCALPHA)
     pygame.draw.rect(s1, (170, 180, 200), (6, 2, 24, 32), border_radius=4)
     pygame.draw.rect(s1, (0, 255, 180), (10, 7, 16, 4), border_radius=1)
     pygame.draw.rect(s1, (0, 255, 180), (10, 15, 16, 4), border_radius=1)
     icons[0] = s1
 
-    s2 = pygame.Surface((36, 36), pygame.SRCALPHA)
+    s2 = pygame.Surface((100, 100), pygame.SRCALPHA)
     pygame.draw.rect(s2, (60, 60, 75), (2, 6, 32, 22), border_radius=4)
     pygame.draw.rect(s2, (255, 255, 255), (5, 10, 6, 6))
     pygame.draw.rect(s2, (255, 255, 255), (15, 10, 6, 6))
     pygame.draw.rect(s2, (255, 255, 255), (25, 10, 6, 6))
     icons[1] = s2
 
-    s3 = pygame.Surface((36, 36), pygame.SRCALPHA)
+    s3 = pygame.Surface((100, 100), pygame.SRCALPHA)
     pygame.draw.rect(s3, (50, 50, 65), (2, 2, 32, 32), border_radius=4)
     pygame.draw.rect(s3, (0, 255, 140), (7, 18, 4, 11), border_radius=1)
     pygame.draw.rect(s3, (0, 255, 220), (13, 11, 4, 18), border_radius=1)
     pygame.draw.rect(s3, (255, 220, 0), (19, 14, 4, 15), border_radius=1)
     icons[2] = s3
 
-    s4 = pygame.Surface((36, 36), pygame.SRCALPHA)
+    s4 = pygame.Surface((100, 100), pygame.SRCALPHA)
     pygame.draw.circle(s4, (50, 50, 65), (18, 18), 16)
     pygame.draw.arc(s4, (255, 70, 70), (4, 4, 28, 28), 0, 2.09, 3)
     pygame.draw.arc(s4, (70, 255, 70), (4, 4, 28, 28), 2.09, 4.18, 3)
     icons[3] = s4
 
-    s5 = pygame.Surface((36, 36), pygame.SRCALPHA)
+    s5 = pygame.Surface((100, 100), pygame.SRCALPHA)
     pygame.draw.line(s5, (200, 150, 100), (4, 32), (25, 11), 3)
     pygame.draw.circle(s5, (255, 255, 120), (28, 8), 6)
     icons[4] = s5
 
-    s6 = pygame.Surface((36, 36), pygame.SRCALPHA)
+    s6 = pygame.Surface((100, 100), pygame.SRCALPHA)
     pygame.draw.rect(s6, (150, 150, 165), (2, 5, 32, 20), border_radius=3)
     pygame.draw.rect(s6, (0, 230, 255), (4, 7, 28, 16))
     icons[5] = s6
@@ -154,27 +233,27 @@ COLOR_TEXT_MUTED = (130, 145, 175)
 
 PIPELINE_STEPS = [
     {
-        "name": "1. INGESTION", 
+        "name": "1. INGEST",
         "summary": "Transferring raw media files onto secure backup servers and verifying digital checksums so data is 100% safe."
     },
     {
-        "name": "2. EDITING", 
+        "name": "2. EDIT",
         "summary": "Assembling clips into a compelling story timeline. Once approved ('Picture Lock'), the structural cut is frozen."
     },
     {
-        "name": "3. SOUND MIX", 
+        "name": "3. SOUND",
         "summary": "Cleaning dialogue, balancing background music, and adding custom sound effects (Foley) for crisp audio clarity."
     },
     {
-        "name": "4. COLOR GRADE", 
+        "name": "4. COLOR",
         "summary": "Balancing tones, contrast, and color palettes across all shots to establish the right visual mood and style."
     },
     {
-        "name": "5. VFX & GRAPHICS", 
+        "name": "5. VFX",
         "summary": "Adding digital effects, cleaning up unwanted objects, and incorporating on-screen titles or animations."
     },
     {
-        "name": "6. MASTER", 
+        "name": "6. MASTER",
         "summary": "Performing quality control (QC) checks, formatting codecs, and outputting the final deliverable for platforms."
     }
 ]
@@ -256,36 +335,65 @@ class FloatingText:
             surf = font_title.render(self.text, True, self.color)
             padding_x = 8
             padding_y = 5
+            text_x = max(8, min(int(self.x), SCREEN_WIDTH - surf.get_width() - 8))
+            text_y = max(8, min(int(self.y), SCREEN_HEIGHT - surf.get_height() - 8))
             bg_rect = pygame.Rect(
-                int(self.x) - padding_x, 
-                int(self.y) - padding_y, 
-                surf.get_width() + (padding_x * 2), 
+                text_x - padding_x,
+                text_y - padding_y,
+                surf.get_width() + (padding_x * 2),
                 surf.get_height() + (padding_y * 2)
             )
+            bg_rect.x = max(0, min(bg_rect.x, SCREEN_WIDTH - bg_rect.width))
+            bg_rect.y = max(0, min(bg_rect.y, SCREEN_HEIGHT - bg_rect.height))
             pygame.draw.rect(surface, (14, 18, 32), bg_rect, border_radius=6)
             pygame.draw.rect(surface, (45, 60, 95), bg_rect, width=1, border_radius=6)
-            surface.blit(surf, (int(self.x), int(self.y)))
+            surface.blit(surf, (bg_rect.x + padding_x, bg_rect.y + padding_y))
 
 def draw_wrapped_text(surface, text, font, color, rect, line_spacing=4):
+    usable_width = max(80, min(rect.width, SCREEN_WIDTH - rect.left - 16))
     words = text.split(' ')
     lines = []
     current_line = []
     
     for word in words:
         test_line = ' '.join(current_line + [word])
-        if font.size(test_line)[0] <= rect.width:
+        if font.size(test_line)[0] <= usable_width:
+            current_line.append(word)
+        else:
+            if current_line:
+                lines.append(' '.join(current_line))
+            current_line = [word]
+    if current_line:
+        lines.append(' '.join(current_line))
+    
+    y = rect.top
+    for line in lines:
+        line_surf = font.render(line, True, color)
+        surface.blit(line_surf, (rect.left, y))
+        y += font.get_height() + line_spacing
+
+
+def draw_centered_multiline_text(surface, text, font, color, center_x, y, max_width=120, line_spacing=4):
+    words = text.split()
+    if not words:
+        return
+
+    lines = []
+    current_line = []
+    for word in words:
+        candidate = ' '.join(current_line + [word])
+        if font.size(candidate)[0] <= max_width or not current_line:
             current_line.append(word)
         else:
             lines.append(' '.join(current_line))
             current_line = [word]
     if current_line:
         lines.append(' '.join(current_line))
-        
-    y = rect.top
-    for line in lines:
+
+    for idx, line in enumerate(lines[:2]):
         line_surf = font.render(line, True, color)
-        surface.blit(line_surf, (rect.left, y))
-        y += font.get_height() + line_spacing
+        x = center_x - line_surf.get_width() // 2
+        surface.blit(line_surf, (x, y + idx * (font.get_height() + line_spacing)))
 
 game_state = "INTRO"
 
@@ -306,6 +414,7 @@ floating_texts = []
 anim_frame = 0
 anim_timer = 0
 sound_cooldown = 0
+victory_sound_played = False
 data_drops = []
 
 client_quotes = [
@@ -318,8 +427,18 @@ client_quotes = [
     "DO WE HAVE A FUNNIER FONT?"
 ]
 
+def get_safe_message_position(x, y, offset=90):
+    margin = 26
+    if x < SCREEN_WIDTH * 0.25:
+        x = min(x + offset, SCREEN_WIDTH - margin)
+    elif x > SCREEN_WIDTH * 0.75:
+        x = max(x - offset, margin)
+    x = max(margin, min(x, SCREEN_WIDTH - margin))
+    y = max(30, min(y, SCREEN_HEIGHT - 90))
+    return int(x), int(y)
+
 def reset_game():
-    global player_rect, client_rect, data_collected, elapsed_time, time_penalties_added, current_step, data_drops, client_touch_cooldown
+    global player_rect, client_rect, data_collected, elapsed_time, time_penalties_added, current_step, data_drops, client_touch_cooldown, victory_sound_played
     player_rect.topleft = (440, 175)
     client_rect.topleft = (750, 240)
     data_collected = 0
@@ -327,6 +446,7 @@ def reset_game():
     time_penalties_added = 0
     current_step = 0
     client_touch_cooldown = 0
+    victory_sound_played = False
     data_drops = [{"pos": list(d["pos"]), "active": True} for d in initial_data_drops]
 
 reset_game()
@@ -388,7 +508,8 @@ while running:
                     drop["active"] = False
                     data_collected += 1
                     elapsed_time = max(0.0, elapsed_time - 3.0)
-                    floating_texts.append(FloatingText("-3s CAFFEINE BOOST", player_rect.centerx, player_rect.centery - 15, (0, 255, 180)))
+                    msg_x, msg_y = get_safe_message_position(player_rect.centerx, player_rect.centery - 15)
+                    floating_texts.append(FloatingText("-3s CAFFEINE BOOST", msg_x, msg_y, (0, 255, 180)))
                     play_sound("collect")
 
         if client_rect.centerx < player_rect.centerx: c_dx = 1
@@ -420,7 +541,8 @@ while running:
                 time_penalties_added += 1
                 client_touch_cooldown = 90
                 funny_quote = random.choice(client_quotes)
-                floating_texts.append(FloatingText(f'"{funny_quote}" (+10s)', player_rect.centerx, player_rect.centery - 20, (255, 80, 80)))
+                msg_x, msg_y = get_safe_message_position(player_rect.centerx, player_rect.centery - 20)
+                floating_texts.append(FloatingText(f'"{funny_quote}" (+10s)', msg_x, msg_y, (255, 80, 80)))
                 play_sound("penalty")
 
         tx, ty = STAGE_POSITIONS[current_step]
@@ -437,9 +559,17 @@ while running:
         if player_rect.colliderect(target_rect):
             play_sound("success")
             current_step += 1
-            game_state = "MILESTONE_PAUSE"
+            if current_step >= len(PIPELINE_STEPS):
+                game_state = "VICTORY"
+                victory_sound_played = False
+            else:
+                game_state = "MILESTONE_PAUSE"
 
-    # --- Render ---
+    if game_state == "VICTORY" and not victory_sound_played:
+        play_sound("victory")
+        victory_sound_played = True
+
+  # --- Render ---
     screen.fill(COLOR_BG)
 
     if game_state == "INTRO":
@@ -449,12 +579,17 @@ while running:
         credit_surf = font_title.render("Developed by Alessandra Zapata", True, (255, 220, 50))
         screen.blit(credit_surf, (SCREEN_WIDTH // 2 - credit_surf.get_width() // 2, 88))
 
-        intro_desc_1 = font_body.render("An interactive educational game exploring how modern media projects move from raw files to final release.", True, COLOR_TEXT)
-        intro_desc_2 = font_body.render("Navigate the studio, grab coffee mugs for time boosts, complete milestones, and dodge last-minute client revisions!", True, COLOR_TEXT_MUTED)
-        screen.blit(intro_desc_1, (SCREEN_WIDTH // 2 - intro_desc_1.get_width() // 2, 125))
-        screen.blit(intro_desc_2, (SCREEN_WIDTH // 2 - intro_desc_2.get_width() // 2, 150))
+        intro_desc_1 = font_body.render("An interactive educational game exploring how modern video projects move from raw files to final release.", True, COLOR_TEXT)
+        
+        # Split the long narrative description into two clean lines to prevent lateral cropping
+        intro_desc_2a = font_body.render("Step onto the chaotic studio floor: navigate through the workspace, extinguish rushing production", True, COLOR_TEXT_MUTED)
+        intro_desc_2b = font_body.render("flames, grab coffee mugs for time boosts, hit milestones, and dodge those dreaded client revisions!", True, COLOR_TEXT_MUTED)
+        
+        screen.blit(intro_desc_1, (SCREEN_WIDTH // 2 - intro_desc_1.get_width() // 2, 120))
+        screen.blit(intro_desc_2a, (SCREEN_WIDTH // 2 - intro_desc_2a.get_width() // 2, 145))
+        screen.blit(intro_desc_2b, (SCREEN_WIDTH // 2 - intro_desc_2b.get_width() // 2, 168))
 
-        intro_box = pygame.Rect(100, 195, 760, 275)
+        intro_box = pygame.Rect(100, 205, 760, 265)
         pygame.draw.rect(screen, (14, 18, 32), intro_box, border_radius=8)
         pygame.draw.rect(screen, COLOR_WALL_CYAN, intro_box, width=1, border_radius=8)
         
@@ -464,7 +599,7 @@ while running:
         rule_3 = font_body.render("• Collect coffee mugs ☕ to gain energy and save 3 seconds (-3s).", True, COLOR_TEXT)
         rule_4 = font_body.render("• Avoid the chasing Client! Getting caught adds +10s in revision delays.", True, COLOR_TEXT)
         
-        screen.blit(rules_title, (130, 215))
+        screen.blit(rules_title, (130, 220))
         screen.blit(rule_1, (130, 255))
         screen.blit(rule_2, (130, 290))
         screen.blit(rule_3, (130, 325))
@@ -480,7 +615,7 @@ while running:
             pygame.draw.line(screen, COLOR_GRID, (0, y), (SCREEN_WIDTH, y))
 
         for p1, p2, color in wall_lines:
-            pygame.draw.line(screen, color, p1, p2, width=3)
+            pygame.draw.line(screen, color, p1, p2, width=5)
 
         for drop in data_drops:
             if drop["active"]:
@@ -489,8 +624,7 @@ while running:
         for idx, (sx, sy) in enumerate(STAGE_POSITIONS):
             screen.blit(station_icons[idx], (sx - 18, sy - 34))
             label_text = PIPELINE_STEPS[idx]["name"]
-            lbl = font_title.render(label_text, True, COLOR_TEXT)
-            screen.blit(lbl, (sx - lbl.get_width() // 2, sy + 6))
+            draw_centered_multiline_text(screen, label_text, font_title, COLOR_TEXT, sx, sy + 6, max_width=110, line_spacing=2)
 
         if game_state in ("PLAYING", "MILESTONE_PAUSE") and current_step < len(PIPELINE_STEPS):
             fx, fy = STAGE_POSITIONS[current_step]
@@ -571,7 +705,7 @@ while running:
         # --- Popup Pause Card ---
         if game_state == "MILESTONE_PAUSE":
             overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 160))
+            overlay.fill((0, 0, 0, 140))
             screen.blit(overlay, (0, 0))
 
             card_w, card_h = 600, 220
@@ -579,17 +713,22 @@ while running:
             card_y = (350 - card_h) // 2
             card_rect = pygame.Rect(card_x, card_y, card_w, card_h)
 
-            pygame.draw.rect(screen, (230, 235, 245), card_rect, border_radius=6)
-            pygame.draw.rect(screen, (255, 255, 255), card_rect, width=2, border_radius=6)
+            card_surface = pygame.Surface((card_w, card_h), pygame.SRCALPHA)
+            card_surface.fill((8, 10, 14, 230))
+            pygame.draw.rect(card_surface, (255, 255, 255, 90), card_surface.get_rect(), width=1)
+            pygame.draw.rect(card_surface, (100, 120, 150, 140), card_surface.get_rect().inflate(-16, -16), width=1)
+            screen.blit(card_surface, (card_x, card_y))
 
             completed_step_info = PIPELINE_STEPS[current_step - 1]
-            title_card_surf = font_header.render(f"STAGE COMPLETE: {completed_step_info['name']}", True, (15, 22, 38))
-            screen.blit(title_card_surf, (card_x + 24, card_y + 22))
+            title_font = pygame.font.SysFont("Arial", 18, bold=True)
+            title_card_surf = title_font.render(f"STAGE COMPLETE: {completed_step_info['name']}", True, (255, 255, 255))
+            screen.blit(title_card_surf, (card_x + 28, card_y + 22))
 
-            text_area = pygame.Rect(card_x + 24, card_y + 64, card_w - 48, 85)
-            draw_wrapped_text(screen, completed_step_info["summary"], font_body, (35, 45, 65), text_area, line_spacing=5)
+            text_area = pygame.Rect(card_x + 28, card_y + 62, card_w - 56, 86)
+            draw_wrapped_text(screen, completed_step_info["summary"], font_body, (245, 245, 245), text_area, line_spacing=5)
 
-            prompt_card_surf = font_title.render("PRESS [SPACE] TO CONTINUE", True, (0, 120, 190))
+            prompt_font = pygame.font.SysFont("Arial", 13, bold=True)
+            prompt_card_surf = prompt_font.render("PRESS [SPACE] TO CONTINUE", True, (255, 255, 255))
             screen.blit(prompt_card_surf, (card_x + (card_w - prompt_card_surf.get_width()) // 2, card_y + 168))
 
     pygame.display.flip()
