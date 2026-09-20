@@ -96,67 +96,46 @@ def play_sound(sound_type):
 
 # --- Pixel-Art Asset Generators ---
 def draw_retro_player(surface, x, y, color=(200, 50, 50)):
-    # Simple retro pixel character representation (e.g., a classic 8-bit block figure)
-    # Head
     pygame.draw.rect(surface, (255, 220, 177), (x + 6, y, 12, 10))
-    # Eyes
     pygame.draw.rect(surface, (0, 0, 0), (x + 8, y + 3, 2, 2))
     pygame.draw.rect(surface, (0, 0, 0), (x + 14, y + 3, 2, 2))
-    # Body / Shirt
     pygame.draw.rect(surface, color, (x + 4, y + 10, 16, 12))
-    # Legs
     pygame.draw.rect(surface, (40, 40, 100), (x + 6, y + 22, 4, 8))
     pygame.draw.rect(surface, (40, 40, 100), (x + 14, y + 22, 4, 8))
 
 def draw_retro_client(surface, x, y):
-    # Retro client sprite with a clipboard/briefcase look
-    # Head
     pygame.draw.rect(surface, (240, 200, 150), (x + 6, y, 12, 10))
-    # Suit / Body
     pygame.draw.rect(surface, (30, 30, 30), (x + 4, y + 10, 16, 12))
-    # Tie
     pygame.draw.rect(surface, (200, 50, 50), (x + 11, y + 12, 2, 6))
-    # Legs
     pygame.draw.rect(surface, (50, 50, 50), (x + 6, y + 22, 4, 8))
     pygame.draw.rect(surface, (50, 50, 50), (x + 14, y + 22, 4, 8))
 
-
 def create_pixel_player():
     surf = pygame.Surface((36, 36), pygame.SRCALPHA)
-    # Hair / head
     pygame.draw.rect(surf, (70, 40, 28), (9, 2, 18, 10))
     pygame.draw.rect(surf, (255, 220, 177), (10, 4, 16, 12))
     pygame.draw.rect(surf, (0, 0, 0), (13, 7, 3, 3))
     pygame.draw.rect(surf, (0, 0, 0), (20, 7, 3, 3))
-    # Hair ponytail
     pygame.draw.rect(surf, (70, 40, 28), (24, 6, 5, 9))
-    # Headset / headphones
     pygame.draw.rect(surf, (45, 55, 75), (8, 5, 3, 8))
     pygame.draw.rect(surf, (45, 55, 75), (25, 5, 3, 8))
     pygame.draw.rect(surf, (45, 55, 75), (11, 3, 14, 2))
-    # Jacket / outfit
     pygame.draw.rect(surf, (220, 80, 120), (8, 16, 20, 12))
     pygame.draw.rect(surf, (255, 255, 255), (13, 18, 10, 5))
-    # Legs
     pygame.draw.rect(surf, (55, 70, 110), (12, 30, 5, 6))
     pygame.draw.rect(surf, (55, 70, 110), (19, 30, 5, 6))
     return surf
 
-
 def create_pixel_client():
     surf = pygame.Surface((36, 36), pygame.SRCALPHA)
-    # Head
     pygame.draw.rect(surf, (240, 200, 150), (10, 4, 16, 12))
     pygame.draw.rect(surf, (0, 0, 0), (13, 7, 3, 3))
     pygame.draw.rect(surf, (0, 0, 0), (20, 7, 3, 3))
-    # Suit
     pygame.draw.rect(surf, (30, 30, 30), (8, 16, 20, 14))
     pygame.draw.rect(surf, (200, 50, 50), (17, 18, 3, 7))
-    # Legs
     pygame.draw.rect(surf, (50, 50, 50), (12, 30, 5, 6))
     pygame.draw.rect(surf, (50, 50, 50), (19, 30, 5, 6))
     return surf
-
 
 def create_coffee_mug_surface():
     surf = pygame.Surface((32, 32), pygame.SRCALPHA)
@@ -233,27 +212,33 @@ COLOR_TEXT_MUTED = (130, 145, 175)
 
 PIPELINE_STEPS = [
     {
-        "name": "1. INGEST",
+        "name": "1. INGEST", 
+        "task": "Transfer camera cards into secure servers or external hard drives.",
         "summary": "Transferring raw media files onto secure backup servers and verifying digital checksums so data is 100% safe."
     },
     {
-        "name": "2. EDIT",
+        "name": "2. EDIT", 
+        "task": "Start selecting footage, make a first cut, and prepare it to present.",
         "summary": "Assembling clips into a compelling story timeline. Once approved ('Picture Lock'), the structural cut is frozen."
     },
     {
-        "name": "3. SOUND",
+        "name": "3. SOUND", 
+        "task": "Prep the approved cut for dialogue cleanup, music mixing, and Foley.",
         "summary": "Cleaning dialogue, balancing background music, and adding custom sound effects (Foley) for crisp audio clarity."
     },
     {
-        "name": "4. COLOR",
+        "name": "4. COLOR", 
+        "task": "Balance tones, contrast, and color across every shot to set the visual mood.",
         "summary": "Balancing tones, contrast, and color palettes across all shots to establish the right visual mood and style."
     },
     {
-        "name": "5. VFX",
+        "name": "5. VFX", 
+        "task": "Add digital effects, remove unwanted objects, and create titles or animations.",
         "summary": "Adding digital effects, cleaning up unwanted objects, and incorporating on-screen titles or animations."
     },
     {
-        "name": "6. MASTER",
+        "name": "6. MASTER", 
+        "task": "Run quality checks, format the codecs, and export the final deliverable.",
         "summary": "Performing quality control (QC) checks, formatting codecs, and outputting the final deliverable for platforms."
     }
 ]
@@ -280,12 +265,12 @@ for line in wall_lines:
     collision_walls.append(pygame.Rect(x, y, w, h))
 
 STAGE_POSITIONS = [
-    (150, 95),   # 0: Ingestion (Top Left Room)
-    (810, 95),   # 1: Editing (Top Right Room)
-    (580, 95),   # 2: Sound Mix (Top Middle Room, safe from walls)
-    (150, 275),  # 3: Color Grade (Bottom Left Room)
-    (600, 275),  # 4: VFX & Graphics (Bottom Right Section, adjusted away from dividers)
-    (835, 275),  # 5: Master (Far Bottom Right Room)
+    (150, 95),   # 0: Ingestion
+    (810, 95),   # 1: Editing
+    (580, 95),   # 2: Sound Mix
+    (150, 275),  # 3: Color Grade
+    (600, 275),  # 4: VFX & Graphics
+    (835, 275),  # 5: Master
 ]
 
 initial_data_drops = [
@@ -371,7 +356,6 @@ def draw_wrapped_text(surface, text, font, color, rect, line_spacing=4):
         line_surf = font.render(line, True, color)
         surface.blit(line_surf, (rect.left, y))
         y += font.get_height() + line_spacing
-
 
 def draw_centered_multiline_text(surface, text, font, color, center_x, y, max_width=120, line_spacing=4):
     words = text.split()
@@ -569,7 +553,7 @@ while running:
         play_sound("victory")
         victory_sound_played = True
 
-  # --- Render ---
+    # --- Render ---
     screen.fill(COLOR_BG)
 
     if game_state == "INTRO":
@@ -580,8 +564,6 @@ while running:
         screen.blit(credit_surf, (SCREEN_WIDTH // 2 - credit_surf.get_width() // 2, 88))
 
         intro_desc_1 = font_body.render("An interactive educational game exploring how modern video projects move from raw files to final release.", True, COLOR_TEXT)
-        
-        # Split the long narrative description into two clean lines to prevent lateral cropping
         intro_desc_2a = font_body.render("Step onto the chaotic studio floor: navigate through the workspace, extinguish rushing production", True, COLOR_TEXT_MUTED)
         intro_desc_2b = font_body.render("flames, grab coffee mugs for time boosts, hit milestones, and dodge those dreaded client revisions!", True, COLOR_TEXT_MUTED)
         
@@ -685,8 +667,9 @@ while running:
         if game_state == "VICTORY":
             screen.blit(font_header.render("STATUS: FINAL PROJECT DELIVERED!", True, (0, 255, 160)), (44, 424))
             screen.blit(font_body.render(f"Final Time: {elapsed_time:.1f}s  |  Coffee Mugs: {data_collected}/{len(initial_data_drops)}  |  Client Interventions: {time_penalties_added}", True, COLOR_TEXT), (44, 462))
-            congrats_box = font_body.render("Great job! You successfully guided the project through all 6 phases of post-production.", True, COLOR_WALL_CYAN)
-            screen.blit(congrats_box, (44, 492))
+            final_stage_summary = f"6. MASTER: {PIPELINE_STEPS[-1]['summary']}"
+            draw_wrapped_text(screen, final_stage_summary, font_body, COLOR_WALL_CYAN,
+                              pygame.Rect(44, 490, SCREEN_WIDTH - 88, 42), line_spacing=3)
             
             replay_lbl = font_title.render("PRESS [R] TO REPLAY    |    PRESS [ESC] TO EXIT", True, (255, 220, 50))
             screen.blit(replay_lbl, (44, 532))
@@ -694,42 +677,35 @@ while running:
             completed_index = current_step - 1 if game_state == "MILESTONE_PAUSE" else current_step
             info = PIPELINE_STEPS[completed_index] if game_state == "MILESTONE_PAUSE" else PIPELINE_STEPS[current_step]
             
-            screen.blit(font_header.render(f"ACTIVE STAGE: {info['name']}", True, (255, 90, 90)), (44, 424))
+            screen.blit(font_header.render(f"CURRENT TASK: {info['name']}", True, (255, 90, 90)), (44, 424))
             
             summary_rect = pygame.Rect(44, 464, SCREEN_WIDTH - 88, 60)
-            draw_wrapped_text(screen, info["summary"], font_body, COLOR_TEXT, summary_rect, line_spacing=5)
+            draw_wrapped_text(screen, info["task"], font_body, COLOR_TEXT, summary_rect, line_spacing=5)
 
             hint_lbl = font_small.render(f"COFFEE MUGS COLLECTED: {data_collected}/{len(initial_data_drops)} (-3s each)  |  AVOID CLIENT NOTES (+10s)", True, COLOR_TEXT_MUTED)
             screen.blit(hint_lbl, (44, 546))
 
-        # --- Popup Pause Card ---
+        # --- Milestone Pause Popup Card ---
         if game_state == "MILESTONE_PAUSE":
             overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-            overlay.fill((0, 0, 0, 140))
+            overlay.fill((0, 0, 0, 150))
             screen.blit(overlay, (0, 0))
 
-            card_w, card_h = 600, 220
-            card_x = (SCREEN_WIDTH - card_w) // 2
-            card_y = (350 - card_h) // 2
-            card_rect = pygame.Rect(card_x, card_y, card_w, card_h)
-
-            card_surface = pygame.Surface((card_w, card_h), pygame.SRCALPHA)
-            card_surface.fill((8, 10, 14, 230))
-            pygame.draw.rect(card_surface, (255, 255, 255, 90), card_surface.get_rect(), width=1)
-            pygame.draw.rect(card_surface, (100, 120, 150, 140), card_surface.get_rect().inflate(-16, -16), width=1)
-            screen.blit(card_surface, (card_x, card_y))
+            popup_rect = pygame.Rect(180, 130, 600, 310)
+            pygame.draw.rect(screen, (16, 21, 38), popup_rect, border_radius=8)
+            pygame.draw.rect(screen, COLOR_WALL_CYAN, popup_rect, width=2, border_radius=8)
 
             completed_step_info = PIPELINE_STEPS[current_step - 1]
-            title_font = pygame.font.SysFont("Arial", 18, bold=True)
-            title_card_surf = title_font.render(f"STAGE COMPLETE: {completed_step_info['name']}", True, (255, 255, 255))
-            screen.blit(title_card_surf, (card_x + 28, card_y + 22))
+            
+            title_popup = font_header.render(f"STAGE COMPLETE: {completed_step_info['name']}", True, (0, 255, 160))
+            screen.blit(title_popup, (popup_rect.centerx - title_popup.get_width() // 2, popup_rect.top + 35))
 
-            text_area = pygame.Rect(card_x + 28, card_y + 62, card_w - 56, 86)
-            draw_wrapped_text(screen, completed_step_info["summary"], font_body, (245, 245, 245), text_area, line_spacing=5)
+            desc_y = popup_rect.top + 90
+            draw_wrapped_text(screen, completed_step_info["summary"], font_body, COLOR_TEXT, 
+                              pygame.Rect(popup_rect.left + 40, desc_y, popup_rect.width - 80, 100), line_spacing=6)
 
-            prompt_font = pygame.font.SysFont("Arial", 13, bold=True)
-            prompt_card_surf = prompt_font.render("PRESS [SPACE] TO CONTINUE", True, (255, 255, 255))
-            screen.blit(prompt_card_surf, (card_x + (card_w - prompt_card_surf.get_width()) // 2, card_y + 168))
+            prompt_popup = font_title.render("PRESS [SPACE] TO CONTINUE", True, (255, 220, 50))
+            screen.blit(prompt_popup, (popup_rect.centerx - prompt_popup.get_width() // 2, popup_rect.bottom - 60))
 
     pygame.display.flip()
 
