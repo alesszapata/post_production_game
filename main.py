@@ -688,7 +688,7 @@ while running:
             congrats_box = font_body.render("Great job! You successfully guided the project through all 6 phases of post-production.", True, COLOR_WALL_CYAN)
             screen.blit(congrats_box, (44, 492))
             
-            replay_lbl = font_title.render("PRESS [R] TO REPLAY", True, (255, 220, 50))
+            replay_lbl = font_title.render("PRESS [R] TO REPLAY    |    PRESS [ESC] TO EXIT", True, (255, 220, 50))
             screen.blit(replay_lbl, (44, 532))
         else:
             completed_index = current_step - 1 if game_state == "MILESTONE_PAUSE" else current_step
