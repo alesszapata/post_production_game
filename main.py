@@ -213,32 +213,32 @@ COLOR_TEXT_MUTED = (130, 145, 175)
 PIPELINE_STEPS = [
     {
         "name": "1. INGEST", 
-        "task": "Transfer camera cards into secure servers or external hard drives.",
+        "task": "Offload camera cards onto secure local raid servers with checksum verification. Next: Edit.",
         "summary": "Transferring raw media files onto secure backup servers and verifying digital checksums so data is 100% safe."
     },
     {
         "name": "2. EDIT", 
-        "task": "Start selecting footage, make a first cut, and prepare it to present.",
+        "task": "Cut the selects, lock the picture, and export an XML for color and an AAF/OMF for audio. Next: Sound.",
         "summary": "Assembling clips into a compelling story timeline. Once approved ('Picture Lock'), the structural cut is frozen."
     },
     {
         "name": "3. SOUND", 
-        "task": "Prep the approved cut for dialogue cleanup, music mixing, and Foley.",
+        "task": "Import the AAF/OMF session into a DAW for dialogue cleanup, Foley, and final mixing. Next: Color.",
         "summary": "Cleaning dialogue, balancing background music, and adding custom sound effects (Foley) for crisp audio clarity."
     },
     {
         "name": "4. COLOR", 
-        "task": "Balance tones, contrast, and color across every shot to set the visual mood.",
+        "task": "Conform the XML timeline with camera-originals to match tones and grade shots. Next: VFX.",
         "summary": "Balancing tones, contrast, and color palettes across all shots to establish the right visual mood and style."
     },
     {
-        "name": "5. VFX", 
+        "name": "5. VFX-Motion Graphics", 
         "task": "Add digital effects, remove unwanted objects, and create titles or animations.",
-        "summary": "Adding digital effects, cleaning up unwanted objects, and incorporating on-screen titles or animations."
+        "summary": "Composite digital elements, clean up artifacts, and bake in graphical titles. Next: Master."
     },
     {
         "name": "6. MASTER", 
-        "task": "Run quality checks, format the codecs, and export the final deliverable.",
+        "task": "Run QC checks, verify delivery codecs, and export web/social formats. Next: Release!",
         "summary": "Performing quality control (QC) checks, formatting codecs, and outputting the final deliverable for platforms."
     }
 ]
