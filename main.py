@@ -18,8 +18,27 @@ SCREEN_HEIGHT = 640
 FPS = 60
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("The Post-Production Rush: Behind the Screen")
+pygame.display.set_caption("Post Production Behind the Screen Pipeline")
 clock = pygame.time.Clock()
+
+# --- Custom Retro Editing App Icon Generator ---
+def create_app_icon():
+    # Creates a 32x32 retro computer monitor / timeline icon
+    icon_surf = pygame.Surface((32, 32), pygame.SRCALPHA)
+    # Monitor outer shell
+    pygame.draw.rect(icon_surf, (45, 55, 75), (2, 2, 28, 20), border_radius=3)
+    # Screen display area
+    pygame.draw.rect(icon_surf, (14, 18, 32), (4, 4, 24, 16), border_radius=2)
+    # Timeline tracks inside screen
+    pygame.draw.rect(icon_surf, (0, 255, 180), (6, 7, 10, 3), border_radius=1)
+    pygame.draw.rect(icon_surf, (255, 90, 90), (12, 12, 12, 3), border_radius=1)
+    # Monitor stand base
+    pygame.draw.rect(icon_surf, (70, 80, 100), (12, 22, 8, 4))
+    pygame.draw.rect(icon_surf, (90, 100, 120), (8, 26, 16, 3), border_radius=1)
+    return icon_surf
+
+# Set window icon
+pygame.display.set_icon(create_app_icon())
 
 font_header = pygame.font.SysFont("Arial", 16, bold=True)
 font_title = pygame.font.SysFont("Arial", 13, bold=True)
@@ -57,7 +76,6 @@ def play_sound(sound_type):
                 note_index = int(t / note_duration)
                 if note_index < len(notes):
                     note_time = t - note_index * note_duration
-                    note_samples = int(sample_rate * note_duration)
                     envelope = min(1.0, note_time / (note_duration * 0.85))
                     note = notes[note_index]
                     crowd_wobble = 0.55 + 0.45 * math.sin(2 * math.pi * (3.5 + note_index * 0.2) * note_time)
@@ -95,21 +113,6 @@ def play_sound(sound_type):
         pass
 
 # --- Pixel-Art Asset Generators ---
-def draw_retro_player(surface, x, y, color=(200, 50, 50)):
-    pygame.draw.rect(surface, (255, 220, 177), (x + 6, y, 12, 10))
-    pygame.draw.rect(surface, (0, 0, 0), (x + 8, y + 3, 2, 2))
-    pygame.draw.rect(surface, (0, 0, 0), (x + 14, y + 3, 2, 2))
-    pygame.draw.rect(surface, color, (x + 4, y + 10, 16, 12))
-    pygame.draw.rect(surface, (40, 40, 100), (x + 6, y + 22, 4, 8))
-    pygame.draw.rect(surface, (40, 40, 100), (x + 14, y + 22, 4, 8))
-
-def draw_retro_client(surface, x, y):
-    pygame.draw.rect(surface, (240, 200, 150), (x + 6, y, 12, 10))
-    pygame.draw.rect(surface, (30, 30, 30), (x + 4, y + 10, 16, 12))
-    pygame.draw.rect(surface, (200, 50, 50), (x + 11, y + 12, 2, 6))
-    pygame.draw.rect(surface, (50, 50, 50), (x + 6, y + 22, 4, 8))
-    pygame.draw.rect(surface, (50, 50, 50), (x + 14, y + 22, 4, 8))
-
 def create_pixel_player():
     surf = pygame.Surface((36, 36), pygame.SRCALPHA)
     pygame.draw.rect(surf, (70, 40, 28), (9, 2, 18, 10))
@@ -206,40 +209,33 @@ station_icons = create_station_icons()
 COLOR_BG = (10, 14, 24)
 COLOR_GRID = (18, 25, 42)
 COLOR_WALL_CYAN = (0, 200, 245)
-COLOR_WALL_PURPLE = (170, 60, 245)
 COLOR_TEXT = (240, 244, 255)
 COLOR_TEXT_MUTED = (130, 145, 175)
 
 PIPELINE_STEPS = [
     {
         "name": "1. INGEST", 
-        "task": "Offload camera cards onto secure local raid servers with checksum verification. Next: Edit.",
-        "summary": "Transferring raw media files onto secure backup servers and verifying digital checksums so data is 100% safe."
+        "summary": "Offload camera cards onto secure drives with checksum verification. Next: Edit."
     },
     {
         "name": "2. EDIT", 
-        "task": "Cut the selects, lock the picture, and export an XML for color and an AAF/OMF for audio. Next: Sound.",
-        "summary": "Assembling clips into a compelling story timeline. Once approved ('Picture Lock'), the structural cut is frozen."
+        "summary": "Cut selects, lock picture, export an XML for color and an AAF/OMF for audio. Next: Sound."
     },
     {
         "name": "3. SOUND", 
-        "task": "Import the AAF/OMF session into a DAW for dialogue cleanup, Foley, and final mixing. Next: Color.",
-        "summary": "Cleaning dialogue, balancing background music, and adding custom sound effects (Foley) for crisp audio clarity."
+        "summary": "Import audio packages into a DAW for dialogue cleanup, Foley, and final mixing. Next: Color."
     },
     {
         "name": "4. COLOR", 
-        "task": "Conform the XML timeline with camera-originals to match tones and grade shots. Next: VFX.",
-        "summary": "Balancing tones, contrast, and color palettes across all shots to establish the right visual mood and style."
+        "summary": "Conform the XML timeline with camera-originals to match tones and grade shots. Next: VFX."
     },
     {
-        "name": "5. VFX-Motion Graphics", 
-        "task": "Add digital effects, remove unwanted objects, and create titles or animations.",
+        "name": "5. VFX", 
         "summary": "Composite digital elements, clean up artifacts, and bake in graphical titles. Next: Master."
     },
     {
         "name": "6. MASTER", 
-        "task": "Run QC checks, verify delivery codecs, and export web/social formats. Next: Release!",
-        "summary": "Performing quality control (QC) checks, formatting codecs, and outputting the final deliverable for platforms."
+        "summary": "Run QC checks, verify delivery codecs, and export web/social formats. Next: Release!"
     }
 ]
 
@@ -557,7 +553,7 @@ while running:
     screen.fill(COLOR_BG)
 
     if game_state == "INTRO":
-        title_surf = font_header.render("THE POST-PRODUCTION RUSH: BEHIND THE SCREEN", True, COLOR_WALL_CYAN)
+        title_surf = font_header.render("POST PRODUCTION BEHIND THE SCREEN PIPELINE", True, COLOR_WALL_CYAN)
         screen.blit(title_surf, (SCREEN_WIDTH // 2 - title_surf.get_width() // 2, 60))
         
         credit_surf = font_title.render("Developed by Alessandra Zapata", True, (255, 220, 50))
@@ -655,7 +651,6 @@ while running:
             step_lbl = font_small.render(step["name"], True, label_color)
             screen.blit(step_lbl, (int(nx) - step_lbl.get_width() // 2, line_y + 11))
 
-        # Content Card with Safe Inner Padding
         card_bg = pygame.Rect(24, 408, SCREEN_WIDTH - 48, 180)
         pygame.draw.rect(screen, (16, 21, 38), card_bg, border_radius=6)
         pygame.draw.rect(screen, (32, 45, 75), card_bg, width=1, border_radius=6)
@@ -667,9 +662,8 @@ while running:
         if game_state == "VICTORY":
             screen.blit(font_header.render("STATUS: FINAL PROJECT DELIVERED!", True, (0, 255, 160)), (44, 424))
             screen.blit(font_body.render(f"Final Time: {elapsed_time:.1f}s  |  Coffee Mugs: {data_collected}/{len(initial_data_drops)}  |  Client Interventions: {time_penalties_added}", True, COLOR_TEXT), (44, 462))
-            final_stage_summary = f"6. MASTER: {PIPELINE_STEPS[-1]['summary']}"
-            draw_wrapped_text(screen, final_stage_summary, font_body, COLOR_WALL_CYAN,
-                              pygame.Rect(44, 490, SCREEN_WIDTH - 88, 42), line_spacing=3)
+            congrats_box = font_body.render("Great job! You successfully guided the project through all 6 phases of post-production.", True, COLOR_WALL_CYAN)
+            screen.blit(congrats_box, (44, 492))
             
             replay_lbl = font_title.render("PRESS [R] TO REPLAY    |    PRESS [ESC] TO EXIT", True, (255, 220, 50))
             screen.blit(replay_lbl, (44, 532))
@@ -677,15 +671,15 @@ while running:
             completed_index = current_step - 1 if game_state == "MILESTONE_PAUSE" else current_step
             info = PIPELINE_STEPS[completed_index] if game_state == "MILESTONE_PAUSE" else PIPELINE_STEPS[current_step]
             
-            screen.blit(font_header.render(f"CURRENT TASK: {info['name']}", True, (255, 90, 90)), (44, 424))
+            screen.blit(font_header.render(f"ACTIVE STAGE: {info['name']}", True, (255, 90, 90)), (44, 424))
             
             summary_rect = pygame.Rect(44, 464, SCREEN_WIDTH - 88, 60)
-            draw_wrapped_text(screen, info["task"], font_body, COLOR_TEXT, summary_rect, line_spacing=5)
+            draw_wrapped_text(screen, info["summary"], font_body, COLOR_TEXT, summary_rect, line_spacing=5)
 
             hint_lbl = font_small.render(f"COFFEE MUGS COLLECTED: {data_collected}/{len(initial_data_drops)} (-3s each)  |  AVOID CLIENT NOTES (+10s)", True, COLOR_TEXT_MUTED)
             screen.blit(hint_lbl, (44, 546))
 
-        # --- Milestone Pause Popup Card ---
+        # --- Milestone Pause Popup Card (Single Instance) ---
         if game_state == "MILESTONE_PAUSE":
             overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 150))
