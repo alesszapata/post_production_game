@@ -1,6 +1,7 @@
 # The Post-Production Rush: Behind the Screen
 
-An interactive educational game that simulates the high-pressure world of media post-production. Navigate through the studio, manage your time, and guide a digital project through all 6 essential phases of post-production—from raw data ingestion to the final master delivery.
+An interactive educational game exploring how modern video projects move from raw files to final release.
+Step onto the chaotic studio floor: navigate through the workspace, extinguish rushing production flames, grab coffee mugs for time boosts, hit milestones, and dodge those dreaded client revisions!
 
 Developed by **Alessandra Zapata**.
 
