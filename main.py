@@ -181,13 +181,13 @@ PIPELINE_STEPS = [
 
 wall_lines = [
     ((30, 20), (930, 20), COLOR_WALL_CYAN),
-    ((930, 20), (930, 350), COLOR_WALL_PURPLE),
-    ((930, 350), (30, 350), COLOR_WALL_PURPLE),
+    ((930, 20), (930, 350), COLOR_WALL_CYAN),
+    ((930, 350), (30, 350), COLOR_WALL_CYAN),
     ((30, 350), (30, 20), COLOR_WALL_CYAN),
     ((280, 20), (280, 140), COLOR_WALL_CYAN),
     ((280, 210), (280, 350), COLOR_WALL_CYAN),
-    ((680, 20), (680, 140), COLOR_WALL_PURPLE),
-    ((680, 210), (680, 350), COLOR_WALL_PURPLE),
+    ((680, 20), (680, 140), COLOR_WALL_CYAN),
+    ((680, 210), (680, 350), COLOR_WALL_CYAN),
     ((480, 120), (480, 240), COLOR_WALL_CYAN),
 ]
 
@@ -201,12 +201,12 @@ for line in wall_lines:
     collision_walls.append(pygame.Rect(x, y, w, h))
 
 STAGE_POSITIONS = [
-    (150, 95),
-    (830, 95),
-    (645, 95),
-    (165, 275),
-    (625, 285),
-    (835, 285),
+    (150, 95),   # 0: Ingestion (Top Left Room)
+    (810, 95),   # 1: Editing (Top Right Room)
+    (580, 95),   # 2: Sound Mix (Top Middle Room, safe from walls)
+    (150, 275),  # 3: Color Grade (Bottom Left Room)
+    (600, 275),  # 4: VFX & Graphics (Bottom Right Section, adjusted away from dividers)
+    (835, 275),  # 5: Master (Far Bottom Right Room)
 ]
 
 initial_data_drops = [
