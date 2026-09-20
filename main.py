@@ -210,10 +210,10 @@ STAGE_POSITIONS = [
 ]
 
 initial_data_drops = [
-    {"pos": [380, 100], "active": True},
+    {"pos": [380, 110], "active": True},
     {"pos": [380, 260], "active": True},
-    {"pos": [580, 100], "active": True},
-    {"pos": [580, 260], "active": True},
+    {"pos": [580, 140], "active": True},
+    {"pos": [580, 200], "active": True},
     {"pos": [320, 185], "active": True},
     {"pos": [720, 185], "active": True},
     {"pos": [480, 55], "active": True},
