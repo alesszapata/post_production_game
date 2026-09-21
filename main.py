@@ -215,27 +215,33 @@ COLOR_TEXT_MUTED = (130, 145, 175)
 PIPELINE_STEPS = [
     {
         "name": "1. INGEST", 
-        "summary": "Offload camera cards onto secure drives with checksum verification. Next: Edit."
+        "summary": "Offload camera cards onto secure drives with checksum verification. Next: Edit.",
+        "completion": "Congrats! You saved the camera footage onto secure drives and verified the backups."
     },
     {
         "name": "2. EDIT", 
-        "summary": "Cut selects, lock picture, export an XML for color and an AAF/OMF for audio. Next: Sound."
+        "summary": "Cut selects, lock picture, export an XML for color and an AAF/OMF for audio. Next: Sound.",
+        "completion": "Congrats! You locked the picture and exported the files needed for sound and color."
     },
     {
         "name": "3. SOUND", 
-        "summary": "Import audio packages into a DAW for dialogue cleanup, Foley, and final mixing. Next: Color."
+        "summary": "Import audio packages into a DAW for dialogue cleanup, Foley, and final mixing. Next: Color.",
+        "completion": "Congrats! You cleaned up the dialogue, added Foley, and completed the final mix."
     },
     {
         "name": "4. COLOR", 
-        "summary": "Conform the XML timeline with camera-originals to match tones and grade shots. Next: VFX."
+        "summary": "Conform the XML timeline with camera-originals to match tones and grade shots. Next: VFX.",
+        "completion": "Congrats! You conformed the timeline and gave the footage its final color grade."
     },
     {
         "name": "5. VFX", 
-        "summary": "Composite digital elements, clean up artifacts, and bake in graphical titles. Next: Master."
+        "summary": "Composite digital elements, clean up artifacts, and bake in graphical titles. Next: Master.",
+        "completion": "Congrats! You finished the visual effects, cleanup, and graphical titles."
     },
     {
         "name": "6. MASTER", 
-        "summary": "Run QC checks, verify delivery codecs, and export web/social formats. Next: Release!"
+        "summary": "Run QC checks, verify delivery codecs, and export web/social formats. Next: Release!",
+        "completion": "Congrats! You passed QC and exported the final delivery masters."
     }
 ]
 
@@ -695,7 +701,7 @@ while running:
             screen.blit(title_popup, (popup_rect.centerx - title_popup.get_width() // 2, popup_rect.top + 35))
 
             desc_y = popup_rect.top + 90
-            draw_wrapped_text(screen, completed_step_info["summary"], font_body, COLOR_TEXT, 
+            draw_wrapped_text(screen, completed_step_info["completion"], font_body, COLOR_TEXT, 
                               pygame.Rect(popup_rect.left + 40, desc_y, popup_rect.width - 80, 100), line_spacing=6)
 
             prompt_popup = font_title.render("PRESS [SPACE] TO CONTINUE", True, (255, 220, 50))
