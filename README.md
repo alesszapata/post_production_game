@@ -32,5 +32,6 @@ Movement: Arrow Keys or W, A, S, D
 
 Restart / Replay: Press [R] on the victory screen when you finish the game!
 
-   
+   <img width="952" height="663" alt="Screenshot 2026-09-22 at 10 47 08 AM" src="https://github.com/user-attachments/assets/ce6a92cc-9b93-4108-9ab7-68d019fda17f" />
+
    
